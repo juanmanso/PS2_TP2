@@ -1,0 +1,272 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>TP_Kalman</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-10-03"><meta name="DC.source" content="TP_Kalman.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">FILTRO DE KALMAN</a></li><li><a href="#2">Ejercicio 2:</a></li></ul></div><h2>FILTRO DE KALMAN<a name="1"></a></h2><p>Con el objetivo de usar el filtro de Kalman que relaciona las variables de estado en forma lineal, se consider&oacute; un primer modelo del sistema como el siguiente: las variables de estado son la posici&oacute;n <img src="TP_Kalman_eq00523042950634024618.png" alt="$P^e$"> del veh&iacute;culo con respecto a las coordenadas terrestres <img src="TP_Kalman_eq12428413953531653171.png" alt="$x$">, <img src="TP_Kalman_eq08830444604280721118.png" alt="$y$">, la velocidad <img src="TP_Kalman_eq02576152670532853989.png" alt="$V^e$"> del veh&iacute;culo con respecto a las mismas coordenadas y el conjunto de variables:</p><p>$$
+\begin{align}
+c_{11} &amp;= \cos(\theta)
+c_{21} &amp;= -\sin(\theta)
+c_{12} &amp;= \sin(\theta)
+c_{22} &amp;= \cos(\theta)
+\end{align}
+$$</p><pre class="error">Error updating Text.
+
+ String must have valid interpreter syntax: 
+$$ \begin{align} c_{11} &amp;= \cos(\theta) c_{21} &amp;= -\sin(\theta) c_{12} &amp;= \sin(\theta) c_{22} &amp;= \cos(\theta) \end{align} $$
+</pre><p>donde <img src="TP_Kalman_eq08288499342375314727.png" alt="$\theta$"> es la orientaci&oacute;n del veh&iacute;culo. De esta forma, la din&aacute;mica del sistema puede describirse mediante el siguiente conjunto de ecuaciones:</p><p>(poner ecuaciones)</p><pre class="codeinput">clear;
+close <span class="string">all</span>;
+</pre><h2>Ejercicio 2:<a name="2"></a></h2><p>Se mide la posici&oacute;n y la velocidad con el radar, y se quiere estimar la posici&oacute;n, velocidad y orientaci&oacute;n del veh&iacute;culo. Para verificar la estimaci&oacute;n se tienen Preal, Vreal y Theta.</p><pre class="codeinput">load(<span class="string">'Acel.mat'</span>); <span class="comment">% Me devuelve Acel, muestreada a 100Hz</span>
+load(<span class="string">'Gyro.mat'</span>); <span class="comment">% Me devuelve Gyro, muestreada a 100Hz</span>
+load(<span class="string">'Radar.mat'</span>); <span class="comment">% Me devuelve Pradar y Vradar, muestreadas a 1Hz</span>
+load(<span class="string">'trayectoria.mat'</span>); <span class="comment">% Me devuelve Preal, Vreal y Theta, muestreadas a 100Hz</span>
+
+<span class="comment">% Se submuestrea la aceleraci&oacute;n y la velocidad angular a 1Hz.</span>
+Ts = 1;
+Abx = Acel(1:100:end,2); <span class="comment">% Aceleraci&oacute;n en x, en coordenadas no inerciales, submuestreada a 1Hz</span>
+Aby = Acel(1:100:end,3); <span class="comment">% Aceleraci&oacute;n en y, en coordenadas no inerciales, submuestreada a 1Hz</span>
+w = Gyro(1:100:end,2); <span class="comment">% Velocidad angular en z, en coordenadas no inerciales, submuestreada a 1Hz</span>
+
+<span class="comment">% Matrices para ecuaciones del sistema:</span>
+I = eye(2);
+O = zeros(2);
+<span class="comment">% A = f(tk) = depende del tiempo (se define en las ecuaciones de Riccati)</span>
+
+B = [I O O O;
+     O I O O;
+     O O I O;
+     O O O I];
+
+Q = [I O O O;
+     O I O O;
+     O O I O;
+     O O O I]; <span class="comment">% Ruido del proceso</span>
+
+C = [I O O O;
+     O I O O]; <span class="comment">% Se mide posici&oacute;n y velocidad con el radar.</span>
+
+sp = 10;
+sv = .1;
+R = [sp*I O;
+     O    sv*I];
+
+y = [Pradar(:,2)';
+     Pradar(:,3)';
+     Vradar(:,2)';
+     Vradar(:,3)'];
+
+<span class="comment">% Ecuaciones de Riccati:</span>
+
+n = length(Abx)-1; <span class="comment">% cantidad de muestras del proceso</span>
+<span class="comment">% Condiciones iniciales:</span>
+xhat = zeros(length(B),n);
+deltaP = 100;
+deltaV = .2;
+deltaTheta = 2/9*pi;
+deltaC = max(sin(deltaTheta),cos(deltaTheta));
+P = [deltaP*I O        O        O;
+     O        deltaV*I O        O;
+     O        O        deltaC*I O;
+     O        O        O        deltaC*I];
+
+h = Ts;
+<span class="keyword">for</span> i=1:n-1
+    A = [1 0 h 0 Abx(i)/2*h^2  Aby(i)/2*h^2   0             0;
+         0 1 0 h 0             0              Abx(i)/2*h^2  Aby(i)/2*h^2;
+         0 0 1 0 Abx(i)*h      Aby(i)*h       0             0;
+         0 0 0 1 0             0              Abx(i)*h      Aby(i)*h;
+         0 0 0 0 h             w(i)*h         0             0;
+         0 0 0 0 -w(i)*h       h              0             0;
+         0 0 0 0 0             0              h             w(i)*h;
+         0 0 0 0 0             0              -w(i)*h       h];
+    xhat(:,i+1) = A*xhat(:,i); <span class="comment">% Predicci&oacute;n</span>
+    P = A*P*A' + B*Q*B';
+    K = P*C'*(inv(R+C*P*C'));
+    xhat(:,i+1) = xhat(:,i+1) + K*(y(:,i+1) -C*xhat(:,i+1)); <span class="comment">% Actualizaci&oacute;n</span>
+    P = (eye(length(A)) - K*C)*P;
+<span class="keyword">end</span>
+
+figure; hold <span class="string">all</span>;
+plot(Preal(:,2),Preal(:,3))
+plot(xhat(1,:),xhat(2,:))
+</pre><img vspace="5" hspace="5" src="TP_Kalman_01.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% FILTRO DE KALMAN
+%
+% Con el objetivo de usar el filtro de Kalman que relaciona las variables
+% de estado en forma lineal, se consideró un primer modelo del sistema como
+% el siguiente: las variables de estado son la posición $P^e$ del vehículo con respecto
+% a las coordenadas terrestres $x$, $y$, la velocidad $V^e$ del vehículo
+% con respecto a las mismas coordenadas y el conjunto de variables:
+%
+% $$
+% \begin{align}
+% c_{11} &= \cos(\theta)
+% c_{21} &= -\sin(\theta)
+% c_{12} &= \sin(\theta)
+% c_{22} &= \cos(\theta)
+% \end{align}
+% $$
+%
+% donde $\theta$ es la orientación del vehículo. De esta forma, la dinámica
+% del sistema puede describirse mediante el siguiente conjunto de
+% ecuaciones:
+% 
+% (poner ecuaciones)
+
+clear;
+close all;
+
+%% Ejercicio 2:
+% Se mide la posición y la velocidad con el radar, y se quiere estimar la 
+% posición, velocidad y orientación del vehículo. Para verificar la
+% estimación se tienen Preal, Vreal y Theta.
+
+load('Acel.mat'); % Me devuelve Acel, muestreada a 100Hz
+load('Gyro.mat'); % Me devuelve Gyro, muestreada a 100Hz
+load('Radar.mat'); % Me devuelve Pradar y Vradar, muestreadas a 1Hz
+load('trayectoria.mat'); % Me devuelve Preal, Vreal y Theta, muestreadas a 100Hz
+
+% Se submuestrea la aceleración y la velocidad angular a 1Hz.
+Ts = 1;
+Abx = Acel(1:100:end,2); % Aceleración en x, en coordenadas no inerciales, submuestreada a 1Hz
+Aby = Acel(1:100:end,3); % Aceleración en y, en coordenadas no inerciales, submuestreada a 1Hz
+w = Gyro(1:100:end,2); % Velocidad angular en z, en coordenadas no inerciales, submuestreada a 1Hz
+
+% Matrices para ecuaciones del sistema:
+I = eye(2);
+O = zeros(2);
+% A = f(tk) = depende del tiempo (se define en las ecuaciones de Riccati)
+
+B = [I O O O;
+     O I O O;
+     O O I O;
+     O O O I]; 
+
+Q = [I O O O;
+     O I O O;
+     O O I O;
+     O O O I]; % Ruido del proceso
+
+C = [I O O O;
+     O I O O]; % Se mide posición y velocidad con el radar.
+ 
+sp = 10;
+sv = .1;
+R = [sp*I O;   
+     O    sv*I];
+ 
+y = [Pradar(:,2)'; 
+     Pradar(:,3)';
+     Vradar(:,2)';
+     Vradar(:,3)'];
+ 
+% Ecuaciones de Riccati:
+
+n = length(Abx)-1; % cantidad de muestras del proceso
+% Condiciones iniciales:
+xhat = zeros(length(B),n);
+deltaP = 100;
+deltaV = .2;
+deltaTheta = 2/9*pi;
+deltaC = max(sin(deltaTheta),cos(deltaTheta));
+P = [deltaP*I O        O        O;
+     O        deltaV*I O        O;
+     O        O        deltaC*I O;
+     O        O        O        deltaC*I];
+
+h = Ts;    
+for i=1:n-1
+    A = [1 0 h 0 Abx(i)/2*h^2  Aby(i)/2*h^2   0             0;
+         0 1 0 h 0             0              Abx(i)/2*h^2  Aby(i)/2*h^2;
+         0 0 1 0 Abx(i)*h      Aby(i)*h       0             0;
+         0 0 0 1 0             0              Abx(i)*h      Aby(i)*h;
+         0 0 0 0 h             w(i)*h         0             0;
+         0 0 0 0 -w(i)*h       h              0             0;
+         0 0 0 0 0             0              h             w(i)*h;
+         0 0 0 0 0             0              -w(i)*h       h];
+    xhat(:,i+1) = A*xhat(:,i); % Predicción
+    P = A*P*A' + B*Q*B';       
+    K = P*C'*(inv(R+C*P*C'));
+    xhat(:,i+1) = xhat(:,i+1) + K*(y(:,i+1) -C*xhat(:,i+1)); % Actualización
+    P = (eye(length(A)) - K*C)*P;
+end
+
+figure; hold all;
+plot(Preal(:,2),Preal(:,3))
+plot(xhat(1,:),xhat(2,:))
+
+ 
+
+
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>
