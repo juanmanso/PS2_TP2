@@ -3,12 +3,12 @@ config_m;
 % EJ KALMAN - Estimación a partir de mediciones
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-acel_str = load('Acel.mat');
-gyro_str = load('Gyro.mat');
-radar_str = load('Radar.mat');
-radar_b_v_str = load('Radar-sesgo-vel.mat');
-radar_b_p_str = load('Radar-sesgo-pos.mat');
-tray_str = load('trayectoria.mat');
+acel_str = load('archivos_tp\Acel.mat');
+gyro_str = load('archivos_tp\Gyro.mat');
+radar_str = load('archivos_tp\Radar.mat');
+radar_b_v_str = load('archivos_tp\Radar-sesgo-vel.mat');
+radar_b_p_str = load('archivos_tp\Radar-sesgo-pos.mat');
+tray_str = load('archivos_tp\trayectoria.mat');
 
 Acel = acel_str.Acel;
 Gyro = gyro_str.Gyro;
@@ -22,11 +22,83 @@ Preal = tray_str.Preal;
 Vreal = tray_str.Vreal;
 Theta = tray_str.Theta;
 
+Fs_gyro_acel=100;
+Ts_gyro_acel=1/Fs_gyro_acel;
 
 
 % Matriz de rotación
 Cbe = [cos(Theta(2:2:end,2)) -sin(Theta(2:2:end,2)); sin(Theta(2:2:end,2)) cos(Theta(2:2:end,2))];
 
+I=eye(2);
+O=zeros(2);
+
+% Cantidad de muestras
+cant_muestras=length(Acel);
+
+% Variable de estado
+% X=[P;V;C11;C12;C21;C22], C11=Cbe(1,1), C12=Cbe(1,2), C21=Cbe(2,1),
+% C22=Cbe(2,2)
+
+%A= [0 0 1 0 0 0 0 0;
+%    0 0 0 1 0 0 0 0;
+%    0 0 0 0 ax ay 0 0;
+%    0 0 0 0 0 0 ax ay;
+%    0 0 0 0 0 wb 0 0;
+%    0 0 0 0 -wb 0 0 0;
+%    0 0 0 0 0 0 0 wb;
+%    0 0 0 0 0 0 -wb 0];
+
+Ts=Ts_gyro_acel;
+
+% 	% Datos
+% 	var_xip = 3e-4;
+% 	var_xiv = 2e-3;
+% 	var_xia = 1e-2;
+
+    cov_p = [1 1]*100;
+	cov_v = [1 1]*0.2;
+	cov_c = [1 1]*1;
+	
+	x0 = [0 0 0 0 0 0 0 0]';
+	P0_0 = diag([cov_p, cov_v, cov_c, cov_c]);
+
+	x = x0;
+	P = P0_0;
+	xk1_k1 = x;
+	Pk1_k1 = P;
+	g = yk(1,:)';
+for i=1:cant_muestras
+%A discreta
+A= [1 0 Ts 0  (Acel(i,1)*Ts^2)/2 (Acel(i,2)*Ts^2)/2 0                   0;
+    0 1 0  Ts 0                  0                  (Acel(i,1)*Ts^2)/2 (Acel(i,2)*Ts^2)/2;
+    0 0 1  0  Acel(i,1)*Ts       Acel(i,2)*Ts       0                   0;
+    0 0 0  1  0                  0                  Acel(i,1)*Ts        Acel(i,2)*Ts;
+    0 0 0  0  Ts                 gyro(i,2)*Ts       0                   0;
+    0 0 0  0  -gyro(i,2)*Ts      Ts                 0                   0;
+    0 0 0  0  0                  0                  Ts                  gyro(i,2)*Ts;
+    0 0 0  0  0                  0                  -gyro(i,2)*Ts       Ts];
+
+% Predicción
+		xk_k1 = Ad * xk1_k1;
+		Pk_k1 =	Ad * Pk1_k1 * Ad' + Bk1 * Qd * Bk1';
+		gk = [innovaciones(yk(i,:),C,xk_k1)];
+%	
+%		% Corrección
+		Kk = Pk_k1 * C'*(R + C*Pk_k1*C')^-1;
+		xk_k = xk_k1 + Kk*(gk);
+		Pk_k = (eye(cant_estados) - Kk*C) * Pk_k1;
+%		
+%		% Actualización
+		xk1_k1 = xk_k;
+		Pk1_k1 = Pk_k;
+%	
+%	
+%		% Guardo
+		g = [g gk];
+		x = [x xk_k];
+		P = [P; Pk_k];
+
+end
 return;
 %	
 %	dim = 2;			% Se considera sólo x e y
