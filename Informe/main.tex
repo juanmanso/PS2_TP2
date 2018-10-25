@@ -1,0 +1,61 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}		% Configuro la codificación
+\input{config.tex}				% Archivo con los comandos globales como Título y autores
+\input{preamble.tex}
+\input{aux_functions.tex}		% Se proveen un conjunto de funciones extras
+
+% Defino el path de los includegraphics
+\graphicspath{{./Figuras/}}		% Directorio que contiene los graficos
+
+% Defino el path para los input de .tex y de .eps
+\makeatletter
+\def\input@path{{./Figuras/}{./Secciones/}{./Cover_page/}}
+\makeatother
+
+% Defino el path del listings
+\ifListings
+%% Cambiar el nombre de la carpeta si se utilizan Listings
+	\lstinputpath{{../Octave/}}
+\fi
+
+\definecolor{myred}{rgb}{0.5,0,0}
+\definecolor{mygreen}{rgb}{0,0.5,0}
+
+\renewcommand{\thesubsection}{\thesection.\alph{subsection}}
+
+\begin{document}
+		% Carátula (formal o simple,_formal o _simple respectivamente) con Resumen
+		% incluido e Índice (si es necesario configurar en config.tex) del informe
+		\input{cover_formal.tex}
+	\setcounter{page}{1}
+
+\begin{center}{\Large{\textbf{Enunciado}}}\end{center}
+		\input{0_introduccion.tex}
+
+	\section{Modelo en variables de estado y filtro de Kalman}\label{sec:ej1}
+		\input{1_ej1.tex}
+		
+	\section{Estimación de la trayectoria}\label{sec:ej2}
+		\input{2_ej2.tex}
+
+	\section{Estimación con sesgo en velocidad en el radar}\label{sec:ej3}
+		\input{3_ej3.tex}
+
+	\section{Estimación con sesgo en posición en el radar}\label{sec:ej4}
+		\input{4_ej4.tex}
+
+	\section{Filtro de Kalman con factorización QR y de Cholesky}\label{sec:ej5}
+		\input{5_ej5.tex}
+
+	\section{Verificación de los resultados del filtro de Kalman}\label{sec:ej6}
+		\input{6_ej6.tex}
+
+	\section{Estimación por Filtro de Kalman Extendido}\label{sec:ej7}
+		\input{7_ej7.tex}
+
+	\section{Conclusiones}\label{sec:conclusiones}
+		\input{8_conclusiones.tex}
+
+	% \appendix
+\end{document}
