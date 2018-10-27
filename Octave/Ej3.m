@@ -62,8 +62,8 @@ sigma_etav=0.1;
     %    0 0 0 0 0 0 -wb 0];
    
     Bk1=eye(cant_estados);
-    C=[I O O O;
-       O I O O];
+    C=[I O O O O;
+       O I O O O];
     M_eta = [randn(dim,cant_muestras)*10;
             randn(dim,cant_muestras)*0.1;
             zeros(dim,cant_muestras);
@@ -95,6 +95,8 @@ Ad= [1 0 Ts 0  (Acel(i,1)*Ts^2)/2 (Acel(i,2)*Ts^2)/2 0                   0;
     0 0 0  0  0                  0                  Ts                  Gyro(i,2)*Ts;
     0 0 0  0  0                  0                  -Gyro(i,2)*Ts       Ts];
 
+Ad=[Ad,     zeros();
+    zeros(),];
 % Predicción
 		xk_k1 = Ad * xk1_k1;
 		Pk_k1 =	Ad * Pk1_k1 * Ad' + Bk1 * Qd * Bk1';
