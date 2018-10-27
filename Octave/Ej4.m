@@ -1,7 +1,7 @@
 config_m;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% EJ KALMAN - Estimaci√≥n a partir de mediciones
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TP 2 KALMAN EJ 4 - EstimaciÛn con sesgo en posiciÛn a partir de mediciones
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 acel_str = load('archivos_tp\Acel.mat');
 gyro_str = load('archivos_tp\Gyro.mat');
@@ -70,7 +70,7 @@ sigma_etav=0.1;
             zeros(dim,cant_muestras)];
     Qd = diag([ones(1,dim)*var_xip, ones(1,dim)*var_xiv,ones(1,2*dim)*var_xic]);
     R = diag([ones(1,dim)*sigma_etap^2 ones(1,dim)*sigma_etav^2]);
-    yk=[Pradar(:,2:3)+randn(cant_muestras_rad,dim)*sigma_etap Vradar(:,2:3)+randn(cant_muestras_rad,dim)*sigma_etav];
+    yk=[Pradar_pb(:,2:3)+randn(cant_muestras_rad,dim)*sigma_etap Vradar_pb(:,2:3)+randn(cant_muestras_rad,dim)*sigma_etav];
     
     cov_p = [1 1]*100;
 	cov_v = [1 1]*0.2;
@@ -188,7 +188,7 @@ else
     legend(['\theta Real';'\theta Estimada'],'location','SouthEast');
     xlabel('Tiempo');
     ylabel('Velocidad');
-end
+end	
 
 	% Gr√°fico de correlaci√≥n de innovaciones (debe ser ruido blanco)
 	covx_g = xcorr(g(1,:)');
@@ -204,9 +204,9 @@ end
 	grid
 	title('Covarianza innovaciones y')
 	
-	% Observabilidad
-	Obs = obsv(Ad,C);
-	rango_obs = rank(Obs);
-	estados_no_observables = cant_estados - rango_obs
-	
-	
+    % Observabilidad
+    Obs = obsv(Ad,C);
+    rango_obs = rank(Obs);
+    estados_no_observables = cant_estados - rango_obs
+    
+    

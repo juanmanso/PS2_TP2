@@ -1,7 +1,7 @@
 config_m;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% EJ KALMAN - EstimaciÃ³n a partir de mediciones
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TP 2 KALMAN EJ 3 - Estimación con sesgo en velocidad a partir de mediciones
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 acel_str = load('archivos_tp\Acel.mat');
 gyro_str = load('archivos_tp\Gyro.mat');
@@ -70,7 +70,7 @@ sigma_etav=0.1;
             zeros(dim,cant_muestras)];
     Qd = diag([ones(1,dim)*var_xip, ones(1,dim)*var_xiv,ones(1,2*dim)*var_xic]);
     R = diag([ones(1,dim)*sigma_etap^2 ones(1,dim)*sigma_etav^2]);
-    yk=[Pradar(:,2:3)+randn(cant_muestras_rad,dim)*sigma_etap Vradar(:,2:3)+randn(cant_muestras_rad,dim)*sigma_etav];
+    yk=[Pradar_vb(:,2:3)+randn(cant_muestras_rad,dim)*sigma_etap Vradar_vb(:,2:3)+randn(cant_muestras_rad,dim)*sigma_etav];
     
     cov_p = [1 1]*100;
 	cov_v = [1 1]*0.2;
