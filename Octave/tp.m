@@ -29,11 +29,14 @@ Ts_gyro_acel=1/Fs_gyro_acel;
 % Matriz de rotaci√≥n
 Cbe = [cos(Theta(2:2:end,2)) -sin(Theta(2:2:end,2)); sin(Theta(2:2:end,2)) cos(Theta(2:2:end,2))];
 
-I=eye(2);
-O=zeros(2);
+dim=2;
+cant_mediciones=dim*4;
+I=eye(dim);
+O=zeros(dim);
 
 % Cantidad de muestras
 cant_muestras=length(Acel);
+cant_muestras_rad=length(Pradar);
 
 % Variable de estado
 % X=[P;V;C11;C12;C21;C22], C11=Cbe(1,1), C12=Cbe(1,2), C21=Cbe(2,1),
@@ -49,7 +52,21 @@ cant_muestras=length(Acel);
 %    0 0 0 0 0 0 -wb 0];
 
 Ts=Ts_gyro_acel;
+var_xip=100;  % CHEQUEAR QU… VALORES PONER AC¡
+var_xiv=10;
+var_xic=1;
+sigma_etap=10;
+sigma_etav=0.1;
 
+M_eta = [randn(dim,cant_muestras)*10;
+        randn(dim,cant_muestras)*0.1;
+        zeros(dim,cant_muestras);
+       	zeros(dim,cant_muestras)];
+Bk1=eye(8);
+C=eye(8);
+Qd = diag([ones(1,dim)*var_xip, ones(1,dim)*var_xiv,ones(1,2*dim)*var_xic]);
+
+yk=[Pradar(:,2:3)+randn(cant_muestras_rad,dim)*sigma_etap Vradar(:,2:3)+randn(cant_muestras_rad,dim)*sigma_etav Gyro(1:100:end-1,:)];
 % 	% Datos
 % 	var_xip = 3e-4;
 % 	var_xiv = 2e-3;
@@ -69,14 +86,14 @@ Ts=Ts_gyro_acel;
 	g = yk(1,:)';
 for i=1:cant_muestras
 %A discreta
-A= [1 0 Ts 0  (Acel(i,1)*Ts^2)/2 (Acel(i,2)*Ts^2)/2 0                   0;
+Ad= [1 0 Ts 0  (Acel(i,1)*Ts^2)/2 (Acel(i,2)*Ts^2)/2 0                   0;
     0 1 0  Ts 0                  0                  (Acel(i,1)*Ts^2)/2 (Acel(i,2)*Ts^2)/2;
     0 0 1  0  Acel(i,1)*Ts       Acel(i,2)*Ts       0                   0;
     0 0 0  1  0                  0                  Acel(i,1)*Ts        Acel(i,2)*Ts;
-    0 0 0  0  Ts                 gyro(i,2)*Ts       0                   0;
-    0 0 0  0  -gyro(i,2)*Ts      Ts                 0                   0;
-    0 0 0  0  0                  0                  Ts                  gyro(i,2)*Ts;
-    0 0 0  0  0                  0                  -gyro(i,2)*Ts       Ts];
+    0 0 0  0  Ts                 Gyro(i,2)*Ts       0                   0;
+    0 0 0  0  -Gyro(i,2)*Ts      Ts                 0                   0;
+    0 0 0  0  0                  0                  Ts                  Gyro(i,2)*Ts;
+    0 0 0  0  0                  0                  -Gyro(i,2)*Ts       Ts];
 
 % Predicci√≥n
 		xk_k1 = Ad * xk1_k1;
