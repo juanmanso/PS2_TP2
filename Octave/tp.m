@@ -38,7 +38,7 @@ cant_muestras_rad=length(Pradar);
 % Varianzas
 var_xip=2*(0.01^3)/6;  % CHEQUEAR QUÉ VALORES PONER ACÁ
 var_xiv=0.01^2;
-var_xic=0.01^2;
+var_xic=0.01^4;
 sigma_etap=10;
 sigma_etav=0.1;
 
@@ -86,29 +86,55 @@ sigma_etav=0.1;
 	g = yk(1,:)';
 for i=1:cant_muestras-1
 %A discreta
-Ad= [1 0 Ts 0  (Acel(i,1)*Ts^2)/2 (Acel(i,2)*Ts^2)/2 0                   0;
-    0 1 0  Ts 0                  0                  (Acel(i,1)*Ts^2)/2 (Acel(i,2)*Ts^2)/2;
-    0 0 1  0  Acel(i,1)*Ts       Acel(i,2)*Ts       0                   0;
-    0 0 0  1  0                  0                  Acel(i,1)*Ts        Acel(i,2)*Ts;
-    0 0 0  0  Ts                 Gyro(i,2)*Ts       0                   0;
-    0 0 0  0  -Gyro(i,2)*Ts      Ts                 0                   0;
-    0 0 0  0  0                  0                  Ts                  Gyro(i,2)*Ts;
-    0 0 0  0  0                  0                  -Gyro(i,2)*Ts       Ts];
+% Ad= [1 0 Ts 0  (Acel(i,1)*Ts^2)/2 (Acel(i,2)*Ts^2)/2 0                   0;
+%     0 1 0  Ts 0                  0                  (Acel(i,1)*Ts^2)/2 (Acel(i,2)*Ts^2)/2;
+%     0 0 1  0  Acel(i,1)*Ts       Acel(i,2)*Ts       0                   0;
+%     0 0 0  1  0                  0                  Acel(i,1)*Ts        Acel(i,2)*Ts;
+%     0 0 0  0  Ts                 Gyro(i,2)*Ts       0                   0;
+%     0 0 0  0  -Gyro(i,2)*Ts      Ts                 0                   0;
+%     0 0 0  0  0                  0                  Ts                  Gyro(i,2)*Ts;
+%     0 0 0  0  0                  0                  -Gyro(i,2)*Ts       Ts];
+% 
+ad35=Acel(i,2)*Ts-(Acel(i,3)*Gyro(i,2)*Ts^2)/2;
+ad36=Acel(i,3)*Ts+(Acel(i,2)*Gyro(i,2)*Ts^2)/2;
+ad47=Acel(i,2)*Ts-(Acel(i,3)*Gyro(i,2)*Ts^2)/2;
+ad48=Acel(i,3)*Ts+(Acel(i,2)*Gyro(i,2)*Ts^2)/2;
+
+Ad= [1 0 Ts 0 (Acel(i,2)*Ts^2)/2     (Acel(i,3)*Ts^2)/2     0                      0;
+    0 1 0  Ts 0                      0                      (Acel(i,2)*Ts^2)/2    (Acel(i,3)*Ts^2)/2;
+    0 0 1  0  ad35                   ad36                   0                      0;
+    0 0 0  1  0                      0                      ad47                   ad48;
+    0 0 0  0  1-((Gyro(i,2)*Ts)^2)/2 Gyro(i,2)*Ts           0                      0;
+    0 0 0  0  -Gyro(i,2)*Ts          1-((Gyro(i,2)*Ts)^2)/2 0                      0;
+    0 0 0  0  0                      0                      1-((Gyro(i,2)*Ts)^2)/2 Gyro(i,2)*Ts;
+    0 0 0  0  0                      0                      -Gyro(i,2)*Ts          1-((Gyro(i,2)*Ts)^2)/2];
+
+% Ad= [1 0 Ts 0 0                  0                  0                   0;
+%     0 1 0  Ts 0                  0                  0                   0;
+%     0 0 1  0  Acel(i,1)*Ts       Acel(i,2)*Ts       0                   0;
+%     0 0 0  1  0                  0                  Acel(i,1)*Ts        Acel(i,2)*Ts;
+%     0 0 0  0  1                  Gyro(i,2)*Ts       0                   0;
+%     0 0 0  0  -Gyro(i,2)*Ts      1                  0                   0;
+%     0 0 0  0  0                  0                  1                   Gyro(i,2)*Ts;
+%     0 0 0  0  0                  0                  -Gyro(i,2)*Ts        1];
+
 
 % PredicciÃ³n
 		xk_k1 = Ad * xk1_k1;
 		Pk_k1 =	Ad * Pk1_k1 * Ad' + Bk1 * Qd * Bk1';
-		gk = [innovaciones(yk(i,:),C,xk_k1)];
+% 		gk = [innovaciones(yk(i,:),C,xk_k1)];
 %	
 %		% Corrección
 if(yk(i,1)~=0)
-		Kk = Pk_k1 * C'*(R + C*Pk_k1*C')^-1;
+        gk = [innovaciones(yk(i,:),C,xk_k1)];
+		Kk = Pk_k1 * C'*(R+ C*Pk_k1*C')^-1;
 		xk_k = xk_k1 + Kk*(gk);
 		Pk_k = (eye(cant_estados) - Kk*C) * Pk_k1;
 %		
 %		% Actualización
 		xk1_k1 = xk_k;
 		Pk1_k1 = Pk_k;
+        
 else
         % Actualización
 		xk1_k1 = xk_k1;
@@ -204,9 +230,9 @@ else
 	h3=figure;
 	hold on;
 	grid;
-    plot(Theta(:,2),'LineWidth',2);
-	plot((180/pi)*acos(x(5,:)).*(-sign(x(6,:))),'--','LineWidth',2);
-	title('Estados de theta');
+    plot(cos(Theta(:,2)*pi/180),'LineWidth',2);
+	plot(x(5,:),'--','LineWidth',2);
+	title('Estados cos(\theta(t))');
     if(EsMatlab == 1)
     legend('\theta Real','\theta Estimada','location','SouthEast');
     xlabel('Tiempo');
@@ -220,6 +246,9 @@ end
 	% GrÃ¡fico de correlaciÃ³n de innovaciones (debe ser ruido blanco)
 	covx_g = xcorr(g(1,:)');
 	covy_g = xcorr(g(2,:)');
+    covvx_g = xcorr(g(3,:)');
+	covvy_g = xcorr(g(4,:)');
+    
 	
 	figure
 	plot(covx_g)
@@ -230,6 +259,16 @@ end
 	plot(covy_g)
 	grid
 	title('Covarianza innovaciones y')
+    figure
+    
+	plot(covvx_g)
+	grid
+	title('Covarianza innovaciones vel x')
+	
+	figure
+	plot(covvy_g)
+	grid
+	title('Covarianza innovaciones vel y')
 	
 	% Observabilidad
 	Obs = obsv(Ad,C);
