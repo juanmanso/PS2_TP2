@@ -31,14 +31,15 @@ Ts=Ts_gyro_acel;
 % Cantidad de mediciones y estados
 dim=2;
 cant_mediciones=dim*2;
-cant_estados=dim*4;
+cant_estados=dim*4+2;  % Se añaden dos por el cálculo del sesgo!
 cant_muestras=length(Acel);
 cant_muestras_rad=length(Pradar);
 
 % Varianzas
-var_xip=100;  % CHEQUEAR QUÉ VALORES PONER ACÁ
-var_xiv=10;
-var_xic=1;
+var_xip=0.001;  % CHEQUEAR QUÉ VALORES PONER ACÁ
+var_xiv=0.1;
+var_xic=0.01;
+var_xib=0.01^10;
 sigma_etap=10;
 sigma_etav=0.1;
 
@@ -61,30 +62,28 @@ sigma_etav=0.1;
     %    0 0 0 0 0 0 0 wb;
     %    0 0 0 0 0 0 -wb 0];
    
-    Bk1=eye(cant_estados);
+    Bk1=diag([ones(1,dim), ones(1,dim), ones(1,dim),ones(1,dim), zeros(1,dim)]);
     C=[I O O O O;
-       O I O O O];
-    M_eta = [randn(dim,cant_muestras)*10;
-            randn(dim,cant_muestras)*0.1;
-            zeros(dim,cant_muestras);
-            zeros(dim,cant_muestras)];
-    Qd = diag([ones(1,dim)*var_xip, ones(1,dim)*var_xiv,ones(1,2*dim)*var_xic]);
+       O I O O I];
+    Qd = diag([ones(1,dim)*var_xip, ones(1,dim)*var_xiv,ones(1,2*dim)*var_xic,ones(1,dim)*var_xib]);
     R = diag([ones(1,dim)*sigma_etap^2 ones(1,dim)*sigma_etav^2]);
-    yk=[Pradar_vb(:,2:3)+randn(cant_muestras_rad,dim)*sigma_etap Vradar_vb(:,2:3)+randn(cant_muestras_rad,dim)*sigma_etav];
+    yk=[Pradar_vb(:,2:3) Vradar_vb(:,2:3)];
+    yk=kron(yk,[1;zeros(100-1,1)]);
     
     cov_p = [1 1]*100;
 	cov_v = [1 1]*0.2;
 	cov_c = [1 1]*1;
+    cov_b = [1 1]*1;
 	
-	x0 = [100 100 0.2 0.2 cos(40*pi/180) -sin(40*pi/180) sin(40*pi/180) cos(40*pi/180)]';
-	P0_0 = diag([cov_p, cov_v, cov_c, cov_c]);
+	x0 = [100 100 0.2 0.2 cos(40*pi/180) -sin(40*pi/180) sin(40*pi/180) cos(40*pi/180) 1 1]';
+	P0_0 = diag([cov_p, cov_v, cov_c, cov_c, cov_b]);
 
 	x = x0;
 	P = P0_0;
 	xk1_k1 = x;
 	Pk1_k1 = P;
 	g = yk(1,:)';
-for i=1:cant_muestras_rad
+for i=1:cant_muestras-1
 %A discreta
 Ad= [1 0 Ts 0  (Acel(i,1)*Ts^2)/2 (Acel(i,2)*Ts^2)/2 0                   0;
     0 1 0  Ts 0                  0                  (Acel(i,1)*Ts^2)/2 (Acel(i,2)*Ts^2)/2;
@@ -95,38 +94,44 @@ Ad= [1 0 Ts 0  (Acel(i,1)*Ts^2)/2 (Acel(i,2)*Ts^2)/2 0                   0;
     0 0 0  0  0                  0                  Ts                  Gyro(i,2)*Ts;
     0 0 0  0  0                  0                  -Gyro(i,2)*Ts       Ts];
 
-Ad=[Ad,     zeros();
-    zeros(),];
+Ad=[Ad, zeros(size(Ad,1),dim);
+    zeros(dim, size(Ad,2)),  I];
 % PredicciÃ³n
 		xk_k1 = Ad * xk1_k1;
 		Pk_k1 =	Ad * Pk1_k1 * Ad' + Bk1 * Qd * Bk1';
 		gk = [innovaciones(yk(i,:),C,xk_k1)];
 %	
-%		% CorrecciÃ³n
+%		% Corrección
+if(yk(i,1)~=0)
 		Kk = Pk_k1 * C'*(R + C*Pk_k1*C')^-1;
 		xk_k = xk_k1 + Kk*(gk);
-		Pk_k = (eye(cant_estados) - Kk*C) * Pk_k1;
+		Pk_k = (eye(cant_estados) - Kk*C) * Pk_k1; 
 %		
-%		% ActualizaciÃ³n
+%		% Actualización
 		xk1_k1 = xk_k;
 		Pk1_k1 = Pk_k;
+else
+        % Actualización
+		xk1_k1 = xk_k1;
+		Pk1_k1 = Pk_k1;
+end
 %	
 %	
 %		% Guardo
 		g = [g gk];
-		x = [x xk_k];
-		P = [P; Pk_k];
+        x = [x xk1_k1]; %Guardo el que acabo de actualizar para la siguiente iteración
+% 		x = [x xk_k];
+% 		P = [P; Pk_k]; % Desactivado para no llenar memoria, no se utiliza
 
 end
 
 %Grafico de medida, estimada, ruidosa
-figure;
+h1=figure;
 hold on;
 grid;
-plot(Preal(:,2),Preal(:,3),'LineWidth',3);
-plot(x(1,:),x(2,:),'r','LineWidth',2);
+plot(Preal(:,2),Preal(:,3),'r','LineWidth',2);
+plot(x(1,:),x(2,:),'--g','LineWidth',2);
 title('Estimación de la trayectoria');
-legend('Real','Estimada','location','SouthEast');
 if(EsMatlab == 1)
     legend('Real','Estimada','location','SouthEast');
     xlabel('Posición x');
@@ -138,33 +143,55 @@ else
 end
 
 	% Grafico del estado posición en función del tiempo
-	figure;
-	hold on;
+	h2=figure;
+    subplot(3,1,[1 2]);
+    hold on;
 	grid;
     plot(Preal(:,2),'LineWidth',2);
-	plot(1:100:cant_muestras,x(1,:),'--','LineWidth',2);
+	plot(x(1,:),'--','LineWidth',2);
     plot(Preal(:,3),'LineWidth',2);
-	plot(1:100:cant_muestras,x(2,:),'--','LineWidth',2);
-	title('Estados de posición');
-    if(EsMatlab == 1)
+	plot(x(2,:),'--','LineWidth',2);
+    title('Estados de posición');
+    xlim([0 length(x(1,:))]);
+if(EsMatlab == 1)
     legend('X Real','X Estimada','Y Real','Y Estimada','location','SouthEast');
     xlabel('Tiempo');
     ylabel('Posición');
 else
     legend(['X Real';'X Estimada';'Y Real';'Y Estimada'],'location','SouthEast');
-    xlabel('Posicion $x$ [\si{\m}]');
-    ylabel('Posicion $y$ [\si{\m}]');
+    xlabel('Tiempo');
+    ylabel('Posición');
     end
+    subplot(3,1,3);
+    hold on;
+    grid;
+    plot(Preal(:,2)-x(1,:)','LineWidth',1);
+    plot(Preal(:,3)-x(2,:)','LineWidth',1);
+    xlim([0 length(x(1,:))]);
+    if(EsMatlab == 1)
+    legend('Error X','Error Y','location','SouthEast');
+    xlabel('Tiempo');
+    ylabel('Posición');
+else
+    legend(['Error X';'Error Y'],'location','SouthEast');
+    xlabel('Tiempo');
+    ylabel('Posición');
+    end
+    h2.Position=[0 0 700 1200];
+    h2.PaperUnits='points';
+    h2.PaperSize=[700 1200];
 	
 % Grafico del estado velocidad en función del tiempo
-	figure;
+	h3=figure;
+    subplot(3,1,[1 2]);
 	hold on;
 	grid;
     plot(Vreal(:,2),'LineWidth',2);
-	plot(1:100:cant_muestras,x(3,:),'--','LineWidth',2);
+	plot(x(3,:),'--','LineWidth',2);
     plot(Vreal(:,3),'LineWidth',2);
-	plot(1:100:cant_muestras,x(4,:),'--','LineWidth',2);
+	plot(x(4,:),'--','LineWidth',2);
 	title('Estados de velocidad');
+    xlim([0 length(x(3,:))]);
     if(EsMatlab == 1)
     legend('X Real','X Estimada','Y Real','Y Estimada','location','SouthEast');
     xlabel('Tiempo');
@@ -174,13 +201,32 @@ else
     xlabel('Tiempo');
     ylabel('Velocidad');
     end
+    subplot(3,1,3);
+    hold on;
+    grid;
+    plot(Vreal(:,2)-x(3,:)','LineWidth',1);
+    plot(Vreal(:,3)-x(4,:)','LineWidth',1);
+    xlim([0 length(x(3,:))]);
+    if(EsMatlab == 1)
+    legend('Error X','Error Y','location','SouthEast');
+    xlabel('Tiempo');
+    ylabel('Posición');
+else
+    legend(['Error X';'Error Y'],'location','SouthEast');
+    xlabel('Tiempo');
+    ylabel('Posición');
+    end
+    h3.Position=[0 0 700 1200];
+    h3.PaperUnits='points';
+    h3.PaperSize=[700 1200];
 
+    
 % Grafico de tita función del tiempo
-	figure;
+	h3=figure;
 	hold on;
 	grid;
     plot(Theta(:,2),'LineWidth',2);
-	plot(1:100:cant_muestras,(180/pi)*acos(x(5,:)).*(-sign(x(6,:))),'--','LineWidth',2);
+	plot((180/pi)*acos(x(5,:)).*(-sign(x(6,:))),'--','LineWidth',2);
 	title('Estados de theta');
     if(EsMatlab == 1)
     legend('\theta Real','\theta Estimada','location','SouthEast');
@@ -210,5 +256,4 @@ end
 	Obs = obsv(Ad,C);
 	rango_obs = rank(Obs);
 	estados_no_observables = cant_estados - rango_obs
-	
 	
