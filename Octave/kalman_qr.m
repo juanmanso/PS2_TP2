@@ -30,6 +30,6 @@ function [x, P, g] = kalman_qr(x_prev, P_prev, A, B, C, Q, R, y)
         %Solo propago.
         x = A * x_prev; 
         P = A * P_prev * A' + B * Q * B';
-        g = y' - C * x_prev;
+        g = NaN;
     end
 end
