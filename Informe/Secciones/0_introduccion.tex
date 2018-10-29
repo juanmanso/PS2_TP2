@@ -13,20 +13,21 @@
 		\label{eq:din_inercial}
 	\end{equation}
 
-	Sin embargo, el dato de la aceleración viene dado en el sistema de coordenadas (terna que se denominará $b$) del vehículo que cambia su orientación a medida que se mueve. Por lo tanto, se define la variable $\theta(t)$ como se ve en la 
-	\Juan{Generar e insertar figura de los ejes del avión}
-	Figura \ref{fig:coordenadas_avion} que describe el ángulo de rotación del vehículo. El otro dato que se provee de la trayectoria es la velocidad angular $\omega(t) = \frac{\dd \theta}{\dd t} (t)$. En consecuencia, con todo lo enunciado previamente se plantean las ecuaciones de la dinámica del vehículo en \eqref{eq:din_veh}.
+	Sin embargo, el dato de la aceleración viene dado en el sistema de coordenadas (terna que se denominará $b$) del vehículo que cambia su orientación a medida que se mueve. Por lo tanto, se define la variable $\theta(t)$ como se ve en la Figura \ref{fig:coordenadas_avion} que describe el ángulo de rotación del vehículo.
+	\graficarPNG{0.3}{sist_coordes}{Sistema de coordenadas inercial y no inercial del vehículo.}{fig:coordenadas_avion}
+
+	El otro dato que se provee de la trayectoria es la velocidad angular $\omega(t) = \frac{\dd \theta}{\dd t} (t)$. En consecuencia, con todo lo enunciado previamente se plantean las ecuaciones de la dinámica del vehículo en \eqref{eq:din_veh}.
 
 	\begin{equation}
 		\begin{cases}
 			\vect{\dot{p}^e}(t) = \vect{v^e}(t)\\[1.4em]
 			\vect{\dot{v}^e}(t) = C^e_b \; \vect{a^b}(t)\\[0.6em]
-			{C^e_b} = \dot{C}^e_b \; \begin{pmatrix} 0& -\omega(t)\\[0.3em] \omega(t)&0 \end{pmatrix}
+			\dot{C}^e_b = {C}^e_b \; \begin{pmatrix} 0& -\omega(t)\\[0.3em] \omega(t)&0 \end{pmatrix}
 		\end{cases}
 		\label{eq:din_veh}
 	\end{equation}
 
-	donde $C^e_b = \begin{pmatrix} \cos(\theta(t)) & -\sen(\theta(t))\\[0.3em] \sen(\theta(t)) & \cos(\theta(t))\end{pmatrix}$
+	donde $C^e_b = \begin{pmatrix} \cos(\theta(t)) & -\sen(\theta(t))\\[0.3em] \sen(\theta(t)) & \cos(\theta(t))\end{pmatrix} = \begin{pmatrix} c_{11}&c_{12}\\c_{21}&c_{22}\end{pmatrix}$. Bajo estas condiciones, se desea estimar la trayectoria del vehículo.
 
 
 

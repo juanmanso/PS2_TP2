@@ -24,7 +24,7 @@ all: main.pdf rename_copy clean
 release: main.pdf cls
 
 
-main.pdf: main.tex config.tex preamble.tex $(SEC) $(FIG)
+main.pdf: main.tex config.tex preamble.tex aux_functions.tex $(SEC) $(FIG)
 	$(TEX) -halt-on-error main.tex
 	$(TEX) main.tex
 # -halt-on-error: Cuando hay un error en la compilación corta sin preguntar qué hacer.
