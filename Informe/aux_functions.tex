@@ -48,7 +48,7 @@
 }
 
 \providecommand{\graficarPDF}[3]{
-			\begin{figure}[h]
+			\begin{figure}[h!]
 				\centering
 		\includegraphics[width=1.0\textwidth,keepaspectratio]{#1}
 					\caption{#2}
@@ -59,7 +59,7 @@
 
 
 \providecommand{\graficarPDFwide}[3]{
-			\begin{figure}[h]
+			\begin{figure}[h!]
 				\centering
 		\includegraphics[scale=0.5,trim={6,5cm 0 0 0}]{#1}
 					\caption{#2}
@@ -67,6 +67,17 @@
 			\end{figure}
 
 }
+
+\providecommand{\graficarPDFa}[4]{
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[scale=0.5,trim={#1}]{#2}
+					\caption{#3}
+					\label{#4}
+			\end{figure}
+
+}
+
 
 
 \providecommand{\underuparrow}[2]{\underset{\underset{#2} \uparrow} #1 }
