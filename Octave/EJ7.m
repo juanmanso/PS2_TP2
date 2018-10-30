@@ -3,7 +3,7 @@ config_m;
 % EJ7 KALMAN - Kalman Extendido
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Imprimir imágenes?
-bool_print=0;
+bool_print=1;
 
 acel_str = load('Acel.mat');
 gyro_str = load('Gyro.mat');
@@ -330,9 +330,21 @@ h6=figure;
 hold on;
 subplot 211
 plot(200:Ts:300,x(9,200*Fs_gyro_acel:300*Fs_gyro_acel));
+title('Sesgo aceleración en x');
+xlabel('Tiempo (s)');
 subplot 212
 plot(200:Ts:300,x(10,200*Fs_gyro_acel:300*Fs_gyro_acel));
+title('Sesgo aceleración en y');
+xlabel('Tiempo (s)');
 	
+    h6.Position=[0 0 1200 700];
+    h6.PaperUnits='points';
+    h6.PaperSize=[1200 700];
+    
+if bool_print
+    print('../Informe/Figuras/graf_ej7_sesgo','-dpdf','-bestfit');
+end
+
 	% Observabilidad
 	Obs = obsv(Ad,C);
 	rango_obs = rank(Obs);
