@@ -3,7 +3,7 @@ config_m;
 % EJ7 KALMAN - Kalman Extendido
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Imprimir imágenes?
-bool_print=1;
+bool_print=0;
 
 acel_str = load('Acel.mat');
 gyro_str = load('Gyro.mat');
@@ -62,8 +62,8 @@ yk=[Pradar(:,2:3) Vradar(:,2:3)];
 yk=kron(yk,[1;zeros(100-1,1)]);
 
 %Agrego sesgo a los acelerometros.
-sesgo_acel_x = 0.1;
-sesgo_acel_y = -0.1;
+sesgo_acel_x = 0.2;
+sesgo_acel_y = -0.2;
 
 for i = 1 : cant_muestras - 1
     Acel(i,2) = Acel(i,2) + sesgo_acel_x;
@@ -74,7 +74,7 @@ end
 cov_p = [1 1]*100;
 cov_v = [1 1]*0.2;
 cov_c = [1 1]*1;
-cov_b = [1 1]*3;
+cov_b = [1 1]*100;
 
 % Condiciones iniciales
 x0 = [100 100 0.2 0.2 cos(40*pi/180) -sin(40*pi/180) sin(40*pi/180) cos(40*pi/180), 0, 0]';
@@ -325,6 +325,13 @@ end
 if bool_print
     print('../Informe/Figuras/graf_ej7_covinn','-dpdf','-bestfit');
 end
+
+h6=figure;
+hold on;
+subplot 211
+plot(200:Ts:300,x(9,200*Fs_gyro_acel:300*Fs_gyro_acel));
+subplot 212
+plot(200:Ts:300,x(10,200*Fs_gyro_acel:300*Fs_gyro_acel));
 	
 	% Observabilidad
 	Obs = obsv(Ad,C);
