@@ -18,8 +18,8 @@
 	donde $\vect{\xi}(t)$ es el ruido de proceso y $\vect{\eta}(t)$ el ruido de medición. La matriz $A$ contiene la información de la dinámica del sistema, $B$ es la matriz de entrada del ruido de proceso, y la matriz de salida es $C$, que conecta los estados con las mediciones de posición y velocidad. Las matrices quedan caracterizadas por la ecuación \eqref{eq:matrix_cont}.
 		\begin{equation}
 			\label{eq:matrix_cont}
-			A(t) = \begin{pmatrix}0&0&I&0&0&0&0&0\\[0.3em]0&0&0&I&0&0&0&0\\[0.3em]0&0&0&0&a^b_x&a^b_y&0&0\\[0.3em]0&0&0&0&0&0&a^b_x&a^b_y&\\[0.3em]0&0&0&0&0&\omega^b&0&0\\[0.3em]0&0&0&0&-\omega^b&0&0&0\\[0.3em]0&0&0&0&0&0&0&\omega^b\\[0.3em]0&0&0&0&0&0&-\omega^b&0\end{pmatrix} \quad%
-			B = \begin{pmatrix}0&0&0\\[0.3em]0&0&0\\[0.3em]0&c_{11}&c_{12}\\[0.3em]0&c_{21}&c_{22}\\[0.3em]1&0&0\\[0.3em]-1&0&0\\[0.3em]1&0&0\\[0.3em]-1&0&0\end{pmatrix} \quad%
+			A(t) = \begin{pmatrix}0&0&1&0&0&0&0&0\\[0.3em]0&0&0&1&0&0&0&0\\[0.3em]0&0&0&0&a^b_x&a^b_y&0&0\\[0.3em]0&0&0&0&0&0&a^b_x&a^b_y&\\[0.3em]0&0&0&0&0&\omega^b&0&0\\[0.3em]0&0&0&0&-\omega^b&0&0&0\\[0.3em]0&0&0&0&0&0&0&\omega^b\\[0.3em]0&0&0&0&0&0&-\omega^b&0\end{pmatrix} \quad%
+		B = \begin{pmatrix}1&0&0&0&0&0&0&0\\[0.3em]0&1&0&0&0&0&0&0\\[0.3em]0&0&1&0&0&0&0&0\\[0.3em]0&0&0&1&0&0&0&0\\[0.3em]0&0&0&0&1&0&0&0\\[0.3em]0&0&0&0&0&1&0&0\\[0.3em]0&0&0&0&0&0&1&0\\[0.3em]0&0&0&0&0&0&0&1\end{pmatrix} \quad%
 			C = \begin{pmatrix}I&0&0\\[0.3em]0&I&0\end{pmatrix}
 		\end{equation}
 	
@@ -30,14 +30,14 @@
 
 	Truncando a segundo orden y reemplazando por $A$ se obtiene:
 		\begin{equation*}
-			A_d = \begin{pmatrix}	I&0&T&0&a^b_x\:\frac{T^2}{2}&a^b_y\:\frac{T^2}{2}&0&0\\[0.3em]%
-						0&I&0&T&0&0&a^b_x\:\frac{T^2}{2}&a^b_y\:\frac{T^2}{2}\\[0.3em]%
-						0&0&I&0&a^b_x\:T-\:a^b_y\:\omega^b\:\frac{T^2}{2}&a^b_y\: T+a^b_x\:\omega^b\:\frac{T^2}{2}&0&0\\[0.3em]%
-						0&0&0&I&0&0&a^b_x\:T-\:a^b_y\:\omega^b\:\frac{T^2}{2}&a^b_y\: T+a^b_x\:\omega^b\:\frac{T^2}{2}\\[0.3em]%
-						0&0&0&0&I-\frac{(\omega\:T)^2}{2}&\omega\:T&0&0\\[0.3em]%
-						0&0&0&0&-\omega\:T&I-\frac{(\omega\:T)^2}{2}&0&0\\[0.3em]%
-						0&0&0&0&0&0&I-\frac{(\omega\:T)^2}{2}&\omega\:T\\[0.3em]%
-						0&0&0&0&0&0&-\omega\:T&I-\frac{(\omega\:T)^2}{2}
+			A_d = \begin{pmatrix}	1&0&T&0&a^b_x\:\frac{T^2}{2}&a^b_y\:\frac{T^2}{2}&0&0\\[0.3em]%
+						0&1&0&T&0&0&a^b_x\:\frac{T^2}{2}&a^b_y\:\frac{T^2}{2}\\[0.3em]%
+						0&0&1&0&a^b_x\:T-\:a^b_y\:\omega^b\:\frac{T^2}{2}&a^b_y\: T+a^b_x\:\omega^b\:\frac{T^2}{2}&0&0\\[0.3em]%
+						0&0&0&1&0&0&a^b_x\:T-\:a^b_y\:\omega^b\:\frac{T^2}{2}&a^b_y\: T+a^b_x\:\omega^b\:\frac{T^2}{2}\\[0.3em]%
+						0&0&0&0&1-\frac{(\omega\:T)^2}{2}&\omega\:T&0&0\\[0.3em]%
+						0&0&0&0&-\omega\:T&1-\frac{(\omega\:T)^2}{2}&0&0\\[0.3em]%
+						0&0&0&0&0&0&1-\frac{(\omega\:T)^2}{2}&\omega\:T\\[0.3em]%
+						0&0&0&0&0&0&-\omega\:T&1-\frac{(\omega\:T)^2}{2}
 		\end{pmatrix}
 		\end{equation*}
 
