@@ -18,3 +18,6 @@
 	R^H = \begin{bmatrix} X&0&0\\[0.3em]Y&Z&0\\[0.3em]W_1&W_2&W_3\end{bmatrix} \text{ donde } \begin{cases} P_{k+1/k} = Z\,Z^H\\ \hat{x}_{k+1/k}=Z\,W^H_2\\ \hat{g}_k = -X\,W^H_1\end{cases}
 	\end{equation*}
 
+	Por lo tanto, el algoritmo de Kalman consta en calcular la matriz $M$ en cada iteración, realizar la factorización \emph{QR} y a partir de las submatrices de $R$ obtener las estimaciones de los estados, innovaciones y autocorrelación.
+
+	Al correr el algoritmo se obtiene la trayectoria de la Figura \ref{fig:ej5} \Juan{Insertar figuras}

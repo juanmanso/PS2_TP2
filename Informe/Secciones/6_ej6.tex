@@ -1,0 +1,4 @@
+	
+	Para verificar si el filtro de Kalman está funcionando correctamente, se debe inspeccionar la correlación de las innovaciones. Las innovaciones constan de la parte ortogonal de las mediciones con la predicción de los estados. Cuanto más descorrelacionadas estén las innovaciones, mejor será la estimación dado que los datos que van arribando son útiles. De este modo, si la correlación de las innovaciones se asemeja al de un proceso blanco se puede afirmar que el algoritmo de Kalman estima correctamente.
+
+	Por otro lado, deberá tenerse en cuenta la observabilidad del sistema porque las innovaciones pueden ser un proceso blanco pero si los estados no son observables, la estimación no será satisfactoria.
