@@ -3,7 +3,7 @@ config_m;
 % EJ KALMAN - EstimaciÃ³n a partir de mediciones
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Imprimir imágenes?
-bool_print=1;
+bool_print=0;
 
 acel_str = load('Acel.mat');
 gyro_str = load('Gyro.mat');
@@ -70,7 +70,7 @@ sigma_etav=0.1;
     R = diag([ones(1,dim)*sigma_etap^2 ones(1,dim)*sigma_etav^2]);
 %   yk=[Pradar(:,2:3)+randn(cant_muestras_rad,dim)*sigma_etap Vradar(:,2:3)+randn(cant_muestras_rad,dim)*sigma_etav];
     yk=[Pradar(:,2:3) Vradar(:,2:3)];
-    yk=kron(yk,[1;zeros(100-1,1)]);
+    yk=kron(yk,[zeros(100-1,1);1]);
   
 % Inicio del Kalman
     cov_p = [1 1]*100;
@@ -132,6 +132,7 @@ if(yk(i,1)~=0)
 		Kk = Pk_k1 * C'*(R+ C*Pk_k1*C')^-1;
 		xk_k = xk_k1 + Kk*(gk);
 		Pk_k = (eye(cant_estados) - Kk*C) * Pk_k1;
+        g = [g gk];
 %		
 %		% Actualización
 		xk1_k1 = xk_k;
@@ -145,7 +146,7 @@ end
 %	
 %	
 %		% Guardo
-		g = [g gk];
+% 		g = [g gk];
         x = [x xk1_k1]; %Guardo el que acabo de actualizar para la siguiente iteración
 % 		x = [x xk_k];
 % 		P = [P; Pk_k]; % Desactivado para no llenar memoria, no se utiliza

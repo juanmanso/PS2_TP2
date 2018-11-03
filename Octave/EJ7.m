@@ -3,7 +3,7 @@ config_m;
 % EJ7 KALMAN - Kalman Extendido
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Imprimir imágenes?
-bool_print=1;
+bool_print=0;
 
 acel_str = load('Acel.mat');
 gyro_str = load('Gyro.mat');
@@ -38,10 +38,17 @@ cant_muestras=length(Acel);
 cant_muestras_rad=length(Pradar);
 
 % Varianzas
+% var_xip=2*(0.01^3)/6;  % CHEQUEAR QUÉ VALORES PONER ACÁ
+% var_xiv=0.01^2;
+% var_xic=0.01^4;
+% var_xib = 0.01^5;
+
 var_xip=2*(0.01^3)/6;  % CHEQUEAR QUÉ VALORES PONER ACÁ
+% var_xip=0.01^5;
 var_xiv=0.01^2;
 var_xic=0.01^4;
-var_xib = 0.01^5;
+var_xib=0.01^5;
+
 sigma_etap=10;
 sigma_etav=0.1;
 
@@ -59,7 +66,7 @@ Qd = diag([ones(1,dim)*var_xip, ones(1,dim)*var_xiv,ones(1,2*dim)*var_xic, var_x
 R = diag([ones(1,dim)*sigma_etap^2 ones(1,dim)*sigma_etav^2]);
 
 yk=[Pradar(:,2:3) Vradar(:,2:3)];
-yk=kron(yk,[1;zeros(100-1,1)]);
+yk=kron(yk,[zeros(100-1,1);1]);
 
 %Agrego sesgo a los acelerometros.
 sesgo_acel_x = 0.2;
@@ -74,7 +81,7 @@ end
 cov_p = [1 1]*100;
 cov_v = [1 1]*0.2;
 cov_c = [1 1]*1;
-cov_b = [1 1]*100;
+cov_b = [1 1]*1;
 
 % Condiciones iniciales
 x0 = [100 100 0.2 0.2 cos(40*pi/180) -sin(40*pi/180) sin(40*pi/180) cos(40*pi/180), 0, 0]';
@@ -121,7 +128,8 @@ for i=1:cant_muestras-1
 		Kk = Pk_k1 * C'*(R+ C*Pk_k1*C')^-1;
 		xk_k = xk_k1 + Kk*(gk);
 		Pk_k = (eye(cant_estados) - Kk*C) * Pk_k1;
-
+        g = [g gk];
+        
         % Actualización
         xk1_k1 = xk_k;
         Pk1_k1 = Pk_k;
@@ -131,7 +139,7 @@ for i=1:cant_muestras-1
 		Pk1_k1 = Pk_k1;
     end
     
-    g = [g gk];
+%     g = [g gk];
     x = [x xk1_k1];
 end
 
@@ -329,11 +337,11 @@ end
 h6=figure;
 hold on;
 subplot 211
-plot(200:Ts:300,x(9,200*Fs_gyro_acel:300*Fs_gyro_acel));
+plot(0:Ts:300-Ts,x(9,1:300*Fs_gyro_acel));
 title('Sesgo aceleración en x');
 xlabel('Tiempo (s)');
 subplot 212
-plot(200:Ts:300,x(10,200*Fs_gyro_acel:300*Fs_gyro_acel));
+plot(0:Ts:300-Ts,x(10,1:300*Fs_gyro_acel));
 title('Sesgo aceleración en y');
 xlabel('Tiempo (s)');
 	

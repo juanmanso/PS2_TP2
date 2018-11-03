@@ -3,7 +3,7 @@ config_m;
 % TP 2 KALMAN EJ 4 - Estimación con sesgo en posición a partir de mediciones
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Imprimir imágenes?
-bool_print=1;
+bool_print=0;
 
 acel_str = load('archivos_tp\Acel.mat');
 gyro_str = load('archivos_tp\Gyro.mat');
@@ -38,10 +38,17 @@ cant_muestras=length(Acel);
 cant_muestras_rad=length(Pradar);
 
 % Varianzas
-var_xip=0.001;  % CHEQUEAR QUÉ VALORES PONER ACÁ
-var_xiv=0.1;
-var_xic=0.01;
+% var_xip=0.001;  % CHEQUEAR QUÉ VALORES PONER ACÁ
+% var_xiv=0.1;
+% var_xic=0.01;
+% var_xib=0.01^10;
+
+var_xip=2*(0.01^3)/6;  % CHEQUEAR QUÉ VALORES PONER ACÁ
+% var_xip=0.01^5;
+var_xiv=0.01^2;
+var_xic=0.01^4;
 var_xib=0.01^10;
+
 sigma_etap=10;
 sigma_etav=0.1;
 
@@ -70,7 +77,7 @@ sigma_etav=0.1;
     Qd = diag([ones(1,dim)*var_xip, ones(1,dim)*var_xiv,ones(1,2*dim)*var_xic,ones(1,dim)*var_xib]);
     R = diag([ones(1,dim)*sigma_etap^2 ones(1,dim)*sigma_etav^2]);
     yk=[Pradar_pb(:,2:3) Vradar_pb(:,2:3)];
-    yk=kron(yk,[1;zeros(100-1,1)]);
+    yk=kron(yk,[zeros(100-1,1);1]);
     
     cov_p = [1 1]*100;
 	cov_v = [1 1]*0.2;
@@ -116,6 +123,7 @@ if(yk(i,1)~=0)
 		Kk = Pk_k1 * C'*(R+ C*Pk_k1*C')^-1;
 		xk_k = xk_k1 + Kk*(gk);
 		Pk_k = (eye(cant_estados) - Kk*C) * Pk_k1;
+        g = [g gk];
 %		
 %		% Actualización
 		xk1_k1 = xk_k;
@@ -129,7 +137,7 @@ end
 %	
 %	
 %		% Guardo
-		g = [g gk];
+% 		g = [g gk];
         x = [x xk1_k1]; %Guardo el que acabo de actualizar para la siguiente iteración
 % 		x = [x xk_k];
 % 		P = [P; Pk_k]; % Desactivado para no llenar memoria, no se utiliza

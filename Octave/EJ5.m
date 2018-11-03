@@ -3,7 +3,7 @@ config_m;
 % EJ5 - Kalman Con QR / Cholesky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Imprimir imágenes?
-bool_print=1;
+bool_print=0;
 
 acel_str = load('Acel.mat');
 gyro_str = load('Gyro.mat');
@@ -38,9 +38,15 @@ cant_muestras=length(Acel);
 cant_muestras_rad=length(Pradar);
 
 % Varianzas.
+% var_xip=2*(0.01^3)/6;  % CHEQUEAR QUÉ VALORES PONER ACÁ
+% var_xiv=0.01^2;
+% var_xic=0.01^4;
+
 var_xip=2*(0.01^3)/6;  % CHEQUEAR QUÉ VALORES PONER ACÁ
+% var_xip=0.01^5;
 var_xiv=0.01^2;
 var_xic=0.01^4;
+
 sigma_etap=10;
 sigma_etav=0.1;
 
@@ -62,7 +68,7 @@ Qd = diag([ones(1,dim)*var_xip, ones(1,dim)*var_xiv,ones(1,2*dim)*var_xic]);
 R = diag([ones(1,dim)*sigma_etap^2 ones(1,dim)*sigma_etav^2]);
 
 yk = [Pradar(:,2:3) Vradar(:,2:3)];
-yk = kron(yk, [1;zeros(100 - 1, 1)]);
+yk = kron(yk, [zeros(100 - 1, 1);1]);
 
 % Inicio del Kalman.
 cov_p = [1 1]*100;
