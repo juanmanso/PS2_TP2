@@ -5,7 +5,7 @@
 clear all, close all;
 
 %EsMatlab = 1;
-EsMatlab = sum(sum(ismember(struct2cell(ver),'MATLAB'))); % Chequeo automático de MATLAB
+EsMatlab = (exist('MATLAB')~=0); % Chequeo automático de MATLAB, ahora octave friendly
 if(EsMatlab == 0)
     graphics_toolkit('gnuplot');
 end
@@ -16,5 +16,12 @@ format long;
 addpath('./Funciones')
 addpath('./Material')
 
-myGreen=[0 0.5 0];
+%% Definiciones para gráficos
+
+% Colores
+colors=load('colors.mat');
+
+% Relación de aspecto
+wide_1=[1200 700];
+vertical_1=[700 1200];
 

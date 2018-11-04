@@ -148,8 +148,8 @@ end
 h1=figure;
 hold on;
 grid;
-plot(Preal(:,2),Preal(:,3),'LineWidth',2,'Color',[100,160,255]/255);
-plot(x(1,:),x(2,:),'--','LineWidth',2,'Color',[96,24,4]/255);
+plot(Preal(:,2),Preal(:,3),'LineWidth',2,'Color',colors.greenery);
+plot(x(1,:),x(2,:),'--r','LineWidth',2);
 title('Estimación de la trayectoria');
 if(EsMatlab == 1)
     legend('Real','Estimada','location','SouthEast');
@@ -161,9 +161,7 @@ else
     ylabel('Posicion $y$ [\si{\m}]');
 end
 
-    h1.Position=[0 0 1200 700];
-    h1.PaperUnits='points';
-    h1.PaperSize=[1200 700];
+    setGraphSize(h1,wide_1);
 
 if bool_print
     print('../Informe/Figuras/graf_ej4','-dpdf','-bestfit');
@@ -174,10 +172,10 @@ end
     subplot(3,1,[1 2]);
     hold on;
 	grid;
-    plot(0:Ts:300,Preal(:,2),'LineWidth',2,'Color',[100,160,255]/255);
-	plot(0:Ts:300,x(1,:),'--','LineWidth',2,'Color',[96,24,4]/255);
-    plot(0:Ts:300,Preal(:,3),'LineWidth',2,'Color',[249,34,74]/255);
-	plot(0:Ts:300,x(2,:),'--','LineWidth',2,'Color',[16,234,38]/255);
+    plot(0:Ts:300,Preal(:,2),'LineWidth',2,'Color',colors.carrot);
+	plot(0:Ts:300,x(1,:),'--','LineWidth',2,'Color',colors.blithe);
+    plot(0:Ts:300,Preal(:,3),'LineWidth',2,'Color',colors.raspberry);
+	plot(0:Ts:300,x(2,:),'--','LineWidth',2,'Color',colors.castaway);
     title('Estados de posición');
     xlim([0 300]);
 if(EsMatlab == 1)
@@ -204,9 +202,7 @@ else
     xlabel('Tiempo (s)');
     ylabel('Error (m)');
     end
-    h2.Position=[0 0 700 1200];
-    h2.PaperUnits='points';
-    h2.PaperSize=[700 1200];
+    setGraphSize(h2,vertical_1);
    
 if bool_print
     print('../Informe/Figuras/graf_ej4_pos','-dpdf','-bestfit');
@@ -217,10 +213,10 @@ end
     subplot(3,1,[1 2]);
 	hold on;
 	grid;
-    plot(0:Ts:300,Vreal(:,2),'LineWidth',2,'Color',[100,160,255]/255);
-	plot(0:Ts:300,x(3,:),'--','LineWidth',2,'Color',[96,24,4]/255);
-    plot(0:Ts:300,Vreal(:,3),'LineWidth',2,'Color',[249,34,74]/255);
-	plot(0:Ts:300,x(4,:),'--','LineWidth',2,'Color',[16,234,38]/255);
+    plot(0:Ts:300,Vreal(:,2),'LineWidth',2,'Color',colors.carrot);
+	plot(0:Ts:300,x(3,:),'--','LineWidth',2,'Color',colors.blithe);
+    plot(0:Ts:300,Vreal(:,3),'LineWidth',2,'Color',colors.raspberry);
+	plot(0:Ts:300,x(4,:),'--','LineWidth',2,'Color',colors.castaway);
 	title('Estados de velocidad');
     xlim([0 300]);
     if(EsMatlab == 1)
@@ -241,15 +237,13 @@ else
     if(EsMatlab == 1)
     legend('Error X','Error Y','location','SouthEast');
     xlabel('Tiempo (s)');
-    ylabel('Error (m)');
+    ylabel('Error (m/s)');
 else
     legend(['Error X';'Error Y'],'location','SouthEast');
     xlabel('Tiempo (s)');
-    ylabel('Posición (m)');
+    ylabel('Error (m/s)');
     end
-    h3.Position=[0 0 700 1200];
-    h3.PaperUnits='points';
-    h3.PaperSize=[700 1200];
+    setGraphSize(h3,vertical_1);
 
 if bool_print
     print('../Informe/Figuras/graf_ej4_vel','-dpdf','-bestfit');
@@ -260,9 +254,9 @@ end
     subplot 311;
 	hold on;
 	grid;
-    plot(0:Ts:300,cos(Theta(:,2)*pi/180),'LineWidth',3,'Color',[100,160,255]/255);
-	plot(0:Ts:300,x(5,:),'g','LineWidth',2);
-    plot(0:Ts:300,x(8,:),'--','LineWidth',2,'Color',[211,0,14]/255);
+    plot(0:Ts:300,cos(Theta(:,2)*pi/180),'LineWidth',3,'Color',colors.mint);
+	plot(0:Ts:300,x(5,:),'g','LineWidth',2,'Color',colors.gecko);
+    plot(0:Ts:300,x(8,:),'--','LineWidth',2,'Color',colors.raspberry);
     xlim([0 300]);
     if(EsMatlab == 1)
     legend('cos(\theta) Real','C_{11} Estimada','C_{22} Estimada','location','NorthEast');
@@ -275,7 +269,7 @@ else
     hold on;
 	grid;
     plot(0:Ts:300,-sin(Theta(:,2)*pi/180),'LineWidth',3);
-	plot(0:Ts:300,x(6,:),'--r','LineWidth',2);
+	plot(0:Ts:300,x(6,:),'--','LineWidth',2,'Color',colors.carrot);
     xlim([0 300]);
     if(EsMatlab == 1)
     legend('-sen(\theta) Real','C_{12} Estimada','location','NorthEast');
@@ -289,7 +283,7 @@ else
     hold on;
 	grid;
     plot(0:Ts:300,sin(Theta(:,2)*pi/180),'LineWidth',3);
-	plot(0:Ts:300,x(7,:),'--r','LineWidth',2);
+	plot(0:Ts:300,x(7,:),'--','LineWidth',2,'Color',colors.carrot);
     xlim([0 300]);
 	suptitle('Estados c_{11},c_{12},c_{21} y c_{22}');
 if(EsMatlab == 1)
@@ -300,9 +294,7 @@ else
     xlabel('Tiempo (s)');
     end
     
-    h4.Position=[0 0 1200 700];
-    h4.PaperUnits='points';
-    h4.PaperSize=[1200 700];
+    setGraphSize(h4,wide_1);
     
 if bool_print
     print('../Informe/Figuras/graf_ej4_theta','-dpdf','-bestfit');
@@ -342,9 +334,7 @@ end
 	title('Covarianza innovaciones vel y')
 	xlim([0 length(covvy_g)]);
     
-    h5.Position=[0 0 1200 700];
-    h5.PaperUnits='points';
-    h5.PaperSize=[1200 700];
+    setGraphSize(h5,wide_1);
     
 if bool_print
     print('../Informe/Figuras/graf_ej4_covinn','-dpdf','-bestfit');
