@@ -1,9 +1,8 @@
 
 \graficarPDF{graf_ej3}{Estimación de la trayectoria.}{fig:ej3}
 	De la misma forma que en el trabajo previo, para la estimación del sesgo se lo agrega al vector de estados al sesgo en ambas coordenadas. Se supone que dicho sesgo es constante, por lo tanto la dinámica del mismo es constante y ruido de proceso nulo. Como el sesgo es en velocidad, a la matriz $C$ se le agregan 2 columnas cuyas dos últimas filas corresponden a la matriz identidad de $2\times 2$. Así las mediciones de velocidad tendrán adheridas los sesgos. Con lo expuesto, se obtiene la trayectoria de la Figura \ref{fig:ej3}. Realizando el test de observabilidad, se ve que todos los estados son observables. Viendo también las innovaciones en la Figura \ref{fig:3covinn} se confirma que las correlaciones son similares al de un proceso blanco asegurando que la estimación es correcta.\\ 
-	\Juan{Podríamos agregar un gráfico de la variancia de la posicion y velocidad X para justificar el error al comienzo}
 \graficarPDF{graf_ej3_covinn}{Innovaciones de las posiciones y velocidades en $x^e$ e $y^e$.}{fig:3covinn}
 
-\graficarPDFa{0 10cm 0 10cm}{graf_ej3_pos}{Posición y error de la misma en función del tiempo.}{fig:3pos}
+\graficarPDFa{0 05cm 0 13cm}{graf_ej3_pos}{Posición y error de la misma en función del tiempo.}{fig:3pos}
 \graficarPDF{graf_ej3_theta}{Valores de los coeficientes de $C^e_b$ en el tiempo.}{fig:3theta}
-\graficarPDFa{0 10cm 0 10cm}{graf_ej3_vel}{Velocidad real y estimada en función del tiempo.}{fig:3vel}
+\graficarPDFa{0 05cm 0 15cm}{graf_ej3_vel}{Velocidad real y estimada en función del tiempo.}{fig:3vel}

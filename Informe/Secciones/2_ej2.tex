@@ -2,10 +2,7 @@
 \graficarPDF{graf_ej2}{Estimación de la trayectoria.}{fig:ej2}
 	Al igual que en el trabajo práctico anterior, siendo todos los estados observables se obtiene una estimación muy buena de la trayectoria del vehículo como se expone en la Figura \ref{fig:ej2}. También se puede comprobar que el filtro de Kalman funciona correctamente al analizar las innovaciones (Figura \ref{fig:2covinn}). Se puede ver que la correlación de las mismas se asemeja al de un proceso blanco.
 \graficarPDF{graf_ej2_covinn}{Innovaciones de las posiciones y velocidades en $x^e$ e $y^e$.}{fig:2covinn}
-\graficarPDFa{0 10cm 0 10cm}{graf_ej2_pos}{Posición y error de la misma en función del tiempo.}{fig:2pos}
-	\Juan{Checkear ésto}
-	Examinando la posición en $x^e$ e $y^e$ se podría entender que la aproximación es buena. Sin embargo, analizando el error entre la trayectoria real y la estimada se ve que tiene la misma forma que la de los coeficientes de la matriz de rotación (Figura \ref{fig:2theta}). 
+\graficarPDFa{0 05cm 0 04cm}{graf_ej2_pos}{Posición y error de la misma en función del tiempo.}{fig:2pos}
+	Analizando los gráficos de posición (Figura \ref{fig:2pos}) y velocidad (Figura \ref{fig:2vel}), en particular sus errores, se ve que tras un periodo pequeño de tiempo las estimaciones son iguales a los valores reales. En cuanto a las estimaciones de los coeficientes de la matriz de rotación expuestas en la Figura \ref{fig:2theta} se ve que el comportamiento es similar: comienzan con un error apreciable y converge rápidamente al valor real.
 \graficarPDF{graf_ej2_theta}{Valores de los coeficientes de $C^e_b$ en el tiempo.}{fig:2theta}
-
-	\Juan{No me parece necesario poner el gráfico de la velocidad.}
 \graficarPDF{graf_ej2_vel}{Velocidad real y estimada en función del tiempo.}{fig:2vel}
