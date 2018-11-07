@@ -3,7 +3,7 @@ config_m;
 % EJ7 KALMAN - Kalman Extendido
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Imprimir imágenes?
-bool_print=1;
+bool_print=0;
 
 %warning('off','all');
 
