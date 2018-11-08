@@ -1,7 +1,5 @@
 	%\lstinputlisting[linerange=Hola-Chau]{../Informe/test.m}
 	
-	\Juan{Preguntar a Emi si podemos usar un \emph{approach} similar al otro tp o si está muy mal}
-	%\Emi{Tiene que ser lo más explícito posible, si se explica en el texto no te lo pregunta}
 	Se define la variable de estado $\vect{x}(t)$ asociada al sistema como:
 		\begin{equation*}
 			\vect{x}(t) = \begin{bmatrix} {p_x}(t) \\[0.3em] p_y(t) \\[0.3em] {v_x}(t) \\[0.3em] v_y(t) \\[0.3em] c_{11}(t) \\[0.3em] c_{12}(t) \\[0.3em] c_{21}(t) \\[0.3em] c_{22}(t) \end{bmatrix} \qquad%
@@ -43,7 +41,7 @@
 		\end{equation*}
 
 
-		Con dicho modelo y las mediciones de posición, velocidad, aceleración no inercial y velocidad angular no inercial, se aplica el filtro de Kalman donde se actualiza la matriz $A_d$ cada $T_s$ segundos y cada $100\, T_s$ llega la medición del radar haciendo posible la correción de los estados.
+		Con dicho modelo y las mediciones de posición, velocidad, aceleración no inercial y velocidad angular no inercial, se aplica el filtro de Kalman donde se actualiza la matriz $A_d$ cada $T$ segundos y cada $100\, T$ llega la medición del radar haciendo posible la correción de los estados.
 	
 %
 %	En cuanto a los ruidos, se hace la suposición que se tratan de ruidos blancos con matrices de covarianza $Q_{d}$ para el ruido de proceso y $R_{d}$ para el ruido de medición. Cabe aclarar que el hecho de que se trate de ruidos blancos no implica que $Q_{d}$ y $R_{d}$ sean diagonales. Ambas matrices dan información de la correlación componente a componente de los vectores de ruido.
