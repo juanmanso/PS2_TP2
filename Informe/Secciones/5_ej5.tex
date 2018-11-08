@@ -20,4 +20,47 @@
 
 	Por lo tanto, el algoritmo de Kalman consta en calcular la matriz $M$ en cada iteración, realizar la factorización \emph{QR} y a partir de las submatrices de $R$ obtener las estimaciones de los estados, innovaciones y autocorrelación.
 
-	Al correr el algoritmo se obtiene la trayectoria de la Figura \ref{fig:ej5} \Juan{Insertar figuras}
+	Al correr el algoritmo se obtiene la trayectoria de la Figura \ref{fig:ej5}.
+
+	\vspace*{\fill}
+
+	\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth,trim= 1.5cm 1.5cm 1.5cm 1.5cm]{graf_ej5.pdf}
+	\caption{Estimación de la trayectoria.}
+	\label{fig:ej5} 
+	\end{figure}
+
+	\vspace*{\fill}
+	\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, trim=1.5cm 1.5cm 1.5cm 1.5cm]{graf_ej5_covinn.pdf}
+	\caption{Covarianza de las innovaciones de las posiciones y velocidades en $x^e$ e $y^e$.}
+	\label{fig:5covinn} 
+	\end{figure}
+	\vspace*{\fill}
+
+	\pagebreak
+
+	\vspace*{\fill}
+	\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.65, trim= 6cm 6cm 6cm 6cm]{graf_ej5_pos.pdf}
+	\caption{Posición y error en función del tiempo.}
+	\label{fig:5pos} 
+	\end{figure}
+	\vspace*{\fill}
+
+	\pagebreak
+	
+	\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth, trim=1.5cm 1.5cm 1.5cm 1.5cm]{graf_ej5_vel.pdf}	
+	\caption{Velocidad real y estimada en función del tiempo.}
+	\label{fig:5vel} 
+	\end{figure}
+
+	\graficarPDF{graf_ej5_theta}{Valores de los coeficientes de $C^e_b$ en el tiempo.}{fig:5theta}
+
+	
+
